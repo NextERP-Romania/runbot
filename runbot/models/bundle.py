@@ -24,6 +24,9 @@ class Bundle(models.Model):
     build_all = fields.Boolean('Force all triggers')
     modules = fields.Char("Modules to install", help="Comma-separated list of modules to install and test.")
 
+    # custom database restore
+    restore_db = fields.Char('Restore Database')
+
     batch_ids = fields.One2many('runbot.batch', 'bundle_id')
     last_batch = fields.Many2one('runbot.batch', index=True, domain=lambda self: [('category_id', '=', self.env.ref('runbot.default_category').id)])
     last_batchs = fields.Many2many('runbot.batch', 'Last batchs', compute='_compute_last_batchs')
