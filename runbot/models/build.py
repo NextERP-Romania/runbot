@@ -832,11 +832,12 @@ class BuildResult(models.Model):
                         """SELECT datname FROM pg_catalog.pg_database WHERE datname = '%s';""" % db_template)
                     res = local_cr.fetchone()
                     if res:
-                        db_template = res
+                        db_template = res[0]
+                        local_cr.execute(sql.SQL("""CREATE DATABASE {} TEMPLATE %s""").format(sql.Identifier(dbname)), (db_template,))
         if not db_template:
             db_template = icp.get_param('runbot.runbot_db_template', default='template0')
-        with local_pgadmin_cursor() as local_cr:
-            local_cr.execute(sql.SQL("""CREATE DATABASE {} TEMPLATE %s LC_COLLATE 'C' ENCODING 'unicode'""").format(sql.Identifier(dbname)), (db_template,))
+            with local_pgadmin_cursor() as local_cr:
+                local_cr.execute(sql.SQL("""CREATE DATABASE {} TEMPLATE %s LC_COLLATE 'C' ENCODING 'unicode'""").format(sql.Identifier(dbname)), (db_template,))
         self.env['runbot.database'].create({'name': dbname, 'build_id': self.id})
 
     def _log(self, func, message, level='INFO', log_type='runbot', path='runbot'):

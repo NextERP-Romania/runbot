@@ -374,11 +374,8 @@ class ConfigStep(models.Model):
         # Get bundle restore database
         bundle = build.params_id.create_batch_id.bundle_id
         if bundle and bundle.restore_db:
-            db_suffix = bundle.restore_db
-            build = build.with_context(restore=True, restore_db=db_suffix)
-        else:
-            # create db if needed
-            db_suffix = build.params_id.config_data.get('db_name') or (build.params_id.dump_db.db_suffix if not self.create_db else False) or self.db_name
+            build = build.with_context(restore=True, restore_db=bundle.restore_db)
+        db_suffix = build.params_id.config_data.get('db_name') or (build.params_id.dump_db.db_suffix if not self.create_db else False) or self.db_name
         db_name = '%s-%s' % (build.dest, db_suffix)
         if self.create_db:
             build._local_pg_createdb(db_name)
