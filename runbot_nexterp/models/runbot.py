@@ -5,10 +5,12 @@ import tempfile
 import dateutil
 import requests
 import os
+import base64
 
 import odoo
 from odoo import models, fields
 from odoo.service import db
+from odoo.exceptions import UserError
 from odoo.addons.runbot.common import local_pgadmin_cursor
 from psycopg2 import sql
 
@@ -81,36 +83,39 @@ class Bundle(models.Model):
     restore_dump = fields.Many2one("ir.attachment", "Database Dump")
     restore_db = fields.Char('Restore Database')
 
-    def write(self, vals):
-        res = super().write(vals)
-        if vals.get("restore_dump"):
-            dump = vals.get("restore_dump")
-            db_name = dump.split('.')[-1]
-            self.restore_db = db_name
-            try:
-                _logger.debug("Delete database %s if exists.", db_name)
-                with local_pgadmin_cursor() as local_cr:
-                    pid_col = 'pid' if local_cr.connection.server_version >= 90200 else 'procpid'
-                    query = 'SELECT pg_terminate_backend({}) ' \
-                            'FROM pg_stat_activity WHERE datname=%s'.format(pid_col)
-                    local_cr.execute(query, [db_name])
-                    local_cr.execute('DROP DATABASE IF EXISTS "%s"' % db_name)
-            except Exception as e:
-                pass
-            try:
-                _logger.debug("Restore new database dump %s.", db_name)
-                data_file = None
-                with tempfile.NamedTemporaryFile(delete=False) as data_file:
-                    dump.save(data_file)
-                db.restore_db(db_name, data_file.name, True)
-                self.anonymize_db(db_name)
-            except Exception as e:
-                error = "Database restore error: %s" % (str(e) or repr(e))
-                return self._render_template(error=error)
-            finally:
-                if data_file:
-                    os.unlink(data_file.name)
-        return res
+#    def write(self, vals):
+#        res = super().write(vals)
+#        if vals.get("restore_dump"):
+#            dump = vals.get("restore_dump")
+#            attachment = self.env["ir.attachment"].browse(dump)
+#            db_name = attachment.name
+#            self.restore_db = db_name
+#            try:
+#                _logger.debug("Delete database %s if exists.", db_name)
+#                with local_pgadmin_cursor() as local_cr:
+#                    pid_col = 'pid' if local_cr.connection.server_version >= 90200 else 'procpid'
+#                    query = 'SELECT pg_terminate_backend({}) ' \
+#                            'FROM pg_stat_activity WHERE datname=%s'.format(pid_col)
+#                    local_cr.execute(query, [db_name])
+#                    local_cr.execute('DROP DATABASE IF EXISTS "%s"' % db_name)
+#            except Exception as e:
+#                pass
+#            try:
+#                _logger.debug("Restore new database dump %s.", db_name)
+#                data_file = None
+#                with tempfile.NamedTemporaryFile(delete=False) as data_file:
+#                    data_file.write(base64.b64decode(attachment.datas))
+#                    data_file.close()
+#                if data_file:
+#                    db.restore_db(db_name, data_file.name, True)
+#                    self.anonymize_db(db_name)
+#            except Exception as e:
+#                error = "Database restore error: %s" % (str(e) or repr(e))
+#                raise UserError(error)
+#            finally:
+#                if data_file:
+#                    os.unlink(data_file.name)
+#        return res
 
     def anonymize_db(self, db_name):
         with local_pgadmin_cursor() as local_cr:
