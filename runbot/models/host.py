@@ -1,7 +1,7 @@
 import logging
 from odoo import models, fields, api
-from ..common import fqdn, local_pgadmin_cursor, os
-from ..container import docker_build
+from odoo.addons.runbot.common import fqdn, local_pgadmin_cursor, os
+from odoo.addons.runbot.container import docker_build
 _logger = logging.getLogger(__name__)
 
 
