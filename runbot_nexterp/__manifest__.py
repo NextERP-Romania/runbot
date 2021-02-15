@@ -9,6 +9,8 @@
     'author': 'NextERP Romania',
     'depends': ['runbot'],
     'data': [
+        'templates/dockerfile.xml',
+        'templates/utils.xml',
         'data/runbot_build_config_data.xml',
         'views/bundle_views.xml',
         ],
