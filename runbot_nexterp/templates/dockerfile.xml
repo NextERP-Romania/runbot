@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="runbot_nexterp.docker_install_MailHog">
+        # Install runbot.docker_install_MailHog
+        COPY /root/go/bin/MailHog /bin
+        RUN /bin/MailHog ;
+    </template>
+
+    <template id="docker_base_mail"
+              inherit_id="runbot.docker_base">
+        <xpath expr="." position="inside">
+            <t t-call="runbot_nexterp.docker_install_MailHog"/>
+        </xpath>
+    </template>
+</odoo>

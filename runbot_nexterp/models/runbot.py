@@ -175,16 +175,21 @@ class BuildResult(models.Model):
         if not restore:
             super()._local_pg_createdb(dbname)
 
-    # def _find_port(self):
-    #     # currently used port
-    #     ids = self.search([('local_state', 'not in', ['pending', 'done']), ('host', '=', fqdn())])
-    #     ports = set(i['port'] for i in ids.read(['port']))
-    #
-    #     # starting port
-    #     icp = self.env['ir.config_parameter']
-    #     port = int(icp.get_param('runbot.runbot_starting_port', default=2000))
-    #
-    #     # find next free port
-    #     while port in ports:
-    #         port += 3
-    #     return port
+    def _find_port(self):
+        port = super()._find_ports
+        return port + 1
+
+    def _docker_run(self, **kwargs):
+        print(kwargs)
+        if "exposed_ports" in kwargs:
+            kwargs["exposed_ports"] += [8025]
+        return super()._docker_run(**kwargs)
+
+class ConfigStep(models.Model):
+    _inherit = 'runbot.build.config.step'
+
+    def _run_run_odoo(self, build, log_path, force=False):
+        res = super()._run_run_odoo(build, log_path, force)
+        build_port = build.port
+        res["exposed_port"] += [build_port +2]
+        return res

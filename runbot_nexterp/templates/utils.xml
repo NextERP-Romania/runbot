@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="runbot_nexterp.mailhog" inherit_id="runbot.build_menu" name="Custom website layout">
+            <xpath expr="//a[@t-attf-href='http://{{bu.domain}}/']" position="after">
+                <a class="dropdown-item" t-attf-href="http://{{bu.domain}}:{{bu.port}}+2/">
+                    <i class="fa fa-sign-in"/>
+                    MailHog
+                </a>
+            </xpath>
+        </template>
+    </data>
+</odoo>
