@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="runbot_build_config_step_restore_base" model="runbot.build.config.step">
+        <field name="name">base</field>
+        <field name="install_modules">-*</field>
+        <field name="cpu_limit">600</field>
+        <field name="test_enable" eval="False"/>
+        <field name="protected" eval="True"/>
+        <field name="default_sequence">10</field>
+    </record>
+    <record id="runbot_build_config_step_update_modules" model="runbot.build.config.step">
+        <field name="name">update</field>
+        <field name="job_type">run_odoo</field>
+        <field name="protected" eval="True"/>
+        <field name="default_sequence">1000</field>
+        <field name="extra_params">-u all</field>
+    </record>
+
+    <record id="runbot_build_config_update" model="runbot.build.config">
+        <field name="name">Update Database</field>
+        <field name="step_order_ids" eval="[(5,0,0),
+        (0, 0, {'step_id': ref('runbot_build_config_step_restore_base')}),
+        (0, 0, {'step_id': ref('runbot_build_config_step_update_modules')})]"/>
+        <field name="protected" eval="True"/>
+    </record>
+</odoo>
