@@ -9,7 +9,7 @@ import os
 import odoo
 from odoo import models, fields
 from odoo.service import db
-from ..common import local_pgadmin_cursor
+from odoo.addons.runbot.common import local_pgadmin_cursor
 from psycopg2 import sql
 
 _logger = logging.getLogger(__name__)
