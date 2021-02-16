@@ -148,46 +148,10 @@ class Bundle(models.Model):
                                DELETE FROM mail_mail;""")
 
 
-class BuildResult(models.Model):
-    _inherit = 'runbot.build'
-
-    def _local_pg_createdb(self, dbname):
-        self._local_pg_dropdb(dbname)
-        _logger.debug("createdb %s", dbname)
-        restore = False
-        bundle = self.params_id.create_batch_id.bundle_id
-        if bundle and bundle.restore_db:
-            db_template = bundle.restore_db
-            if db_template:
-                with local_pgadmin_cursor() as local_cr:
-                    local_cr.execute(
-                        """SELECT datname 
-                           FROM pg_catalog.pg_database 
-                           WHERE datname = '%s';""" % db_template)
-                    res = local_cr.fetchone()
-                    if res:
-                        db_template = res[0]
-                        local_cr.execute(sql.SQL(
-                            """CREATE DATABASE {} TEMPLATE %s""").format(sql.Identifier(dbname)),
-                            (db_template,))
-                        self.env['runbot.database'].create({'name': dbname, 'build_id': self.id})
-                        restore = True
-        if not restore:
-            super()._local_pg_createdb(dbname)
-
-    def _find_port(self):
-        port = super()._find_ports
-        return port + 1
-
-    def _docker_run(self, **kwargs):
-        print(kwargs)
-        if "exposed_ports" in kwargs:
-            kwargs["exposed_ports"] += [8025]
-        return super()._docker_run(**kwargs)
 
 class ConfigStep(models.Model):
     _inherit = 'runbot.build.config.step'
-
+ 
     def _run_run_odoo(self, build, log_path, force=False):
         res = super()._run_run_odoo(build, log_path, force)
         build_port = build.port

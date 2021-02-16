@@ -20,13 +20,9 @@ _logger = logging.getLogger(__name__)
 
 def docker_run_with_mailhog(*args, **kwargs):
     if len(args)>4:
-        args[0]= '/bin/mailhog& ; '+args[0]
-        ports = args[4]
-        args[4].extend([1024,8024])
+        args[0]= '/bin/mailhog -ui-bind-addr "0.0.0.0:8071" & ; '+args[0]
     if 'cmd' in kwargs:
-        kwargs['cmd']= '/bin/mailhog& ; '+kwargs['cmd']
-    if 'exposed_ports' in kwargs:
-        kwargs['exposed_ports'].extend([1024,8024])
+        kwargs['cmd']= '/bin/mailhog -ui-bind-addr "0.0.0.0:8071" & ; '+kwargs['cmd']
     return runbot.container._docker_run(args, kwargs)
 
 if os.environ.get('RUNBOT_MODE') != 'test':
