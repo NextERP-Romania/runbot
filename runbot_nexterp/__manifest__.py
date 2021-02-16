@@ -11,6 +11,8 @@
     'data': [
         'templates/dockerfile.xml',
         'templates/utils.xml',
+        'templates/nginx.xml',  # to add mail.xxx.ronbot to go to maihog
+        
         'data/runbot_build_config_data.xml',
         'views/bundle_views.xml',
         ],
