@@ -60,7 +60,7 @@ server {
 }
 server {
     listen 8080;
-    server_name ~^mail_<t t-raw="re_escape(build.dest)"/>(-[a-z0-9]+)?\.<t t-raw="re_escape(fqdn)"/>$;
+    server_name ~^mail\_<t t-raw="re_escape(build.dest)"/>(-[a-z0-9]+)?\.<t t-raw="re_escape(fqdn)"/>$;
     location / { proxy_pass http://127.0.0.1:<t t-esc="build.port + 2"/>; }
 }
 
