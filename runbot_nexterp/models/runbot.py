@@ -155,5 +155,7 @@ class ConfigStep(models.Model):
     def _run_run_odoo(self, build, log_path, force=False):
         res = super()._run_run_odoo(build, log_path, force)
         build_port = build.port
+        # Add mailhog smtp and port
+        res["cmd"] += ["--smtp-port", "1025"]
         res["exposed_port"] += [build_port +2]
         return res
