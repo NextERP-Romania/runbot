@@ -44,9 +44,3 @@ class BuildResult(models.Model):
                         restore = True
         if not restore:
             super()._local_pg_createdb(dbname)
-
-    def _find_port(self):
-        port = super()._find_port()  # next free port started from 2000. is going to be last_used_port +3
-        return port + 1
-
-
