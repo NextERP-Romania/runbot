@@ -3,6 +3,9 @@
 import os
 from .. import runbot
 
+# put into build.py  runbot.build.params
+
+############not imported anymore#################
 
 def docker_run_with_mailhog(*args, **kwargs):
     if len(args)>4:
@@ -16,6 +19,7 @@ def docker_get_gateway_ip():
     return '127.0.0.1'
 
 if os.environ.get('RUNBOT_MODE') != 'test':
+    print("****not in test mode\n"*40)
     runbot.container.docker_run = docker_run_with_mailhog
     runbot.container.docker_get_gateway_ip = docker_get_gateway_ip
 

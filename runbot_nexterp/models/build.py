@@ -16,6 +16,71 @@ from psycopg2 import sql
 
 _logger = logging.getLogger(__name__)
 
+class BuildParameters(models.Model):
+    _inherit = 'runbot.build.params'
+
+# add also the mailhog
+    def _cmd(self, python_params=None, py_version=None, local_only=True, sub_command=None):
+        """Return a list describing the command to start the build
+        """
+        self.ensure_one()
+        build = self
+        python_params = python_params or []
+        py_version = py_version if py_version is not None else build._get_py_version()
+        pres=[]
+# start mailhog    
+        pres.append(['/bin/mailhog8071'])
+#/ start mailhog
+        for commit_id in self.env.context.get('defined_commit_ids') or self.params_id.commit_ids:
+            if not self.params_id.skip_requirements and os.path.isfile(commit_id._source_path('requirements.txt')):
+                repo_dir = self._docker_source_folder(commit_id)
+                requirement_path = os.path.join(repo_dir, 'requirements.txt')
+                pres.append(['sudo', 'pip%s' % py_version, 'install', '-r', '%s' % requirement_path])
+
+        addons_paths = self._get_addons_path()
+        (server_commit, server_file) = self._get_server_info()
+        server_dir = self._docker_source_folder(server_commit)
+
+        # commandline
+        cmd = ['python%s' % py_version] + python_params + [os.path.join(server_dir, server_file)]
+        if sub_command:
+            cmd += [sub_command]
+        cmd += ['--addons-path', ",".join(addons_paths)]
+        # options
+        config_path = build._server("tools/config.py")
+        if grep(config_path, "no-xmlrpcs"):  # move that to configs ?
+            cmd.append("--no-xmlrpcs")
+        if grep(config_path, "no-netrpc"):
+            cmd.append("--no-netrpc")
+
+        command = Command(pres, cmd, [], cmd_checker=build)
+
+        # use the username of the runbot host to connect to the databases
+        command.add_config_tuple('db_user', '%s' % pwd.getpwuid(os.getuid()).pw_name)
+
+        if local_only:
+            if grep(config_path, "--http-interface"):
+                command.add_config_tuple("http_interface", "127.0.0.1")
+            elif grep(config_path, "--xmlrpc-interface"):
+                command.add_config_tuple("xmlrpc_interface", "127.0.0.1")
+
+        if grep(config_path, "log-db"):
+            logdb_uri = self.env['ir.config_parameter'].get_param('runbot.runbot_logdb_uri')
+            logdb = self.env.cr.dbname
+            if logdb_uri and grep(build._server('sql_db.py'), 'allow_uri'):
+                logdb = '%s' % logdb_uri
+            command.add_config_tuple("log_db", "%s" % logdb)
+            if grep(config_path, 'log-db-level'):
+                command.add_config_tuple("log_db_level", '25')
+
+        if grep(config_path, "data-dir"):
+            datadir = build._path('datadir')
+            if not os.path.exists(datadir):
+                os.mkdir(datadir)
+            command.add_config_tuple("data_dir", '/data/build/datadir')
+
+        return command
+
 
 
 class BuildResult(models.Model):
