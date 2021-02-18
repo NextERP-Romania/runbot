@@ -3,7 +3,7 @@
     <data>
         <template id="runbot_nexterp.mailhog" inherit_id="runbot.build_menu" name="Custom website layout">
             <xpath expr="//a[@t-attf-href='http://{{bu.domain}}/']" position="after">
-                <a class="dropdown-item" t-attf-href="http://mail.{{bu.domain}}/">
+                <a class="dropdown-item" t-attf-href="http://mail_{{bu.domain}}/">
                     <i class="fa fa-sign-in"/>
                     MailHog
                 </a>
