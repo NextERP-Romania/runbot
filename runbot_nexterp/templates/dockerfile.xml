@@ -3,10 +3,10 @@
     <template id="runbot_nexterp.docker_install_MailHog">
 # Install runbot.docker_install_MailHog
 RUN wget https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_linux_amd64 \
-    && cp MailHog_linux_amd64 /bin/mailhog \
-    && chmod +x /bin/mailhog \
-    && echo "/bin/mailhog -ui-bind-addr '0.0.0.0:8071'& &>/dev/null" > /bin/mailhog8071 \
-    && chmod +x /bin/mailhog8071
+    &amp;&amp; cp MailHog_linux_amd64 /bin/mailhog \
+    &amp;&amp; chmod +x /bin/mailhog \
+    &amp;&amp; echo "/bin/mailhog -ui-bind-addr '0.0.0.0:8071'&amp;&amp; &amp;&amp;>/dev/null" > /bin/mailhog8071 \
+    &amp;&amp; chmod +x /bin/mailhog8071
 
     </template>
 
