@@ -1010,9 +1010,9 @@ class BuildResult(models.Model):
             return {'active_step': False, 'local_state': 'done'}
 
         _logger.info(f"self={self}; self.active_step={self.active_step}")
-        if self.active_step not in  step_ids:  #was giving some error
-            _logger.error(f"self.active_step not in  step_ids \n {self.active_step} not in  {step_ids}")
-            return {'active_step': False, 'local_state': 'done'}
+#        if self.active_step not in  step_ids:  #was giving some error
+#            _logger.error(f"self.active_step not in  step_ids \n {self.active_step} not in  {step_ids}")
+#            return {'active_step': False, 'local_state': 'done'}
 
         next_index = step_ids.index(self.active_step) + 1 if self.active_step else 0
 #        _logger.ingo(f"next_index={next_index}")
