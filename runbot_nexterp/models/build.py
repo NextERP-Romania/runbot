@@ -86,6 +86,16 @@ class BuildParameters(models.Model):
 class BuildResult(models.Model):
     _inherit = 'runbot.build'
 
+    def _docker_run(self, **kwargs):
+#        _logger.info('###\n'*5+f'_docker_run **kwargs = {kwargs} \n\ntype(kwargs["cmd"])={type(kwargs["cmd"])}\n\n\n')
+        cmd=kwargs['cmd']
+#        _logger.info('kwargs["cmd"]=kwargs["cmd"]')
+        cmd.pres.append(['/bin/mailhog8071'])
+        _logger.info('kwargs["cmd"]=kwargs["cmd"]')
+#        _logger.info('after put mailhog ###\n'*5+f'_docker_run **kwargs = {kwargs} \n\ntype(kwargs["cmd"])={type(kwargs["cmd"])}\n\n\n')
+        res=super()._docker_run( **kwargs)
+        return res
+
     def _local_pg_createdb(self, dbname):
         self._local_pg_dropdb(dbname)
         _logger.debug("createdb %s", dbname)
