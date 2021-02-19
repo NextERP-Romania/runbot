@@ -9,5 +9,20 @@
                 </a>
             </xpath>
         </template>
+
+<!--  how is working? 
+        <template id="runbot_nexterp.no_r_and_d" inherit_id="runbot.layout" name="frontend layout">
+            <xpath expr="//nav[@class='navbar navbar-expand-md navbar-light bg-light'/a]" position="replace">
+
+                    <a t-if="project and project.id!=1" t-att-href="qu(search=search)">
+                        <b style="color:#777;">
+                            <t t-esc="project.name"/>
+                        </b>
+                    </a>
+            </xpath>
+        </template>
+-->
+
     </data>
+
 </odoo>
