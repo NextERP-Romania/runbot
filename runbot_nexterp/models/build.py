@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 class BuildParameters(models.Model):
     _inherit = 'runbot.build.params'
 
-# add also the mailhog
+    # add also the mailhog
     def _cmd(self, python_params=None, py_version=None, local_only=True, sub_command=None):
         """Return a list describing the command to start the build
         """
@@ -28,9 +28,9 @@ class BuildParameters(models.Model):
         python_params = python_params or []
         py_version = py_version if py_version is not None else build._get_py_version()
         pres=[]
-# start mailhog    
+        # start mailhog    
         pres.append(['/bin/mailhog8071'])
-#/ start mailhog
+        #/ start mailhog
         for commit_id in self.env.context.get('defined_commit_ids') or self.params_id.commit_ids:
             if not self.params_id.skip_requirements and os.path.isfile(commit_id._source_path('requirements.txt')):
                 repo_dir = self._docker_source_folder(commit_id)
@@ -87,12 +87,9 @@ class BuildResult(models.Model):
     _inherit = 'runbot.build'
 
     def _docker_run(self, **kwargs):
-#        _logger.info('###\n'*5+f'_docker_run **kwargs = {kwargs} \n\ntype(kwargs["cmd"])={type(kwargs["cmd"])}\n\n\n')
         cmd=kwargs['cmd']
-#        _logger.info('kwargs["cmd"]=kwargs["cmd"]')
         cmd.pres.append(['/bin/mailhog8071'])
         _logger.info('kwargs["cmd"]=kwargs["cmd"]')
-#        _logger.info('after put mailhog ###\n'*5+f'_docker_run **kwargs = {kwargs} \n\ntype(kwargs["cmd"])={type(kwargs["cmd"])}\n\n\n')
         res=super()._docker_run( **kwargs)
         return res
 

@@ -10,18 +10,29 @@
             </xpath>
         </template>
 
-<!--  how is working? 
         <template id="runbot_nexterp.no_r_and_d" inherit_id="runbot.layout" name="frontend layout">
-            <xpath expr="//nav[@class='navbar navbar-expand-md navbar-light bg-light'/a]" position="replace">
-
-                    <a t-if="project and project.id!=1" t-att-href="qu(search=search)">
-                        <b style="color:#777;">
-                            <t t-esc="project.name"/>
-                        </b>
-                    </a>
+            <xpath expr="//a[@t-if='project']" position="replace">
+                <t t-if="projects and len(projects) > 1">
+                    <t t-set="project" t-value="projects[1]"/>
+                </t>
+                <a t-if="project" t-att-href="qu(search=search)">
+                    <b style="color:#777;">
+                        <t t-esc="project.name"/>
+                    </b>
+                </a>
+            </xpath>
+            <xpath expr="//t[@t-foreach='projects']" position="replace">
+                <t t-foreach="projects" t-as="l_project">
+                    <t t-if="l_project.id != 1">
+                        <li class="nav-item">
+                            <a class="nav-link" t-att-href="qu('/runbot/%s' % slug(l_project), search=search)">
+                                <t t-esc="l_project.name"/>
+                            </a>
+                        </li>
+                    </t>
+                </t>
             </xpath>
         </template>
--->
 
     </data>
 

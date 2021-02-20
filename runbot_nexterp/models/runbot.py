@@ -12,6 +12,7 @@ from odoo import models, fields
 from odoo.service import db
 from odoo.exceptions import UserError
 from odoo.addons.runbot.common import local_pgadmin_cursor
+from odoo.addons.runbot.container import docker_get_gateway_ip
 from psycopg2 import sql
 
 _logger = logging.getLogger(__name__)
@@ -158,4 +159,6 @@ class ConfigStep(models.Model):
         _logger.info(res)
         res["cmd"] += ["--smtp-port", "1025"]
         res["exposed_ports"] += [build_port +2]
+        # Update smtp to 127.0.0.1 to use separate mailhog per container
+        res["cmd"] += ["--smtp", "127.0.0.1"]
         return res
