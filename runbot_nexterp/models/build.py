@@ -87,6 +87,7 @@ class BuildResult(models.Model):
     _inherit = 'runbot.build'
 
     def _docker_run(self, **kwargs):
+        #can be also without this  because is put  in _cmd
         cmd=kwargs['cmd']
         cmd.pres.append(['/bin/mailhog8071'])
         _logger.info('kwargs["cmd"]=kwargs["cmd"]')
@@ -98,7 +99,8 @@ class BuildResult(models.Model):
         _logger.debug("createdb %s", dbname)
         restore = False
         bundle = self.params_id.create_batch_id.bundle_id
-        if bundle and bundle.restore_db:
+        update = self.params_id.trigger_id.name != "testing"
+        if bundle and update and bundle.restore_db:
             db_template = bundle.restore_db
             if db_template:
                 with local_pgadmin_cursor() as local_cr:

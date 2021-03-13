@@ -12,7 +12,7 @@
 
         <template id="runbot_nexterp.no_r_and_d" inherit_id="runbot.layout" name="frontend layout">
             <xpath expr="//a[@t-if='project']" position="replace">
-                <t t-if="projects and len(projects) > 1">
+                <t t-if="projects and len(projects) > 1 and project and project.id == 1">
                     <t t-set="project" t-value="projects[1]"/>
                 </t>
                 <a t-if="project" t-att-href="qu(search=search)">
@@ -30,6 +30,14 @@
                             </a>
                         </li>
                     </t>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="runbot_nexterp.bundles_no_r_and_d" inherit_id="runbot.bundles" name="Runbot bundles">
+            <xpath expr="//div[@t-if='not project']" position="before">
+                <t t-if="projects and len(projects) > 1 and project and project.id == 1">
+                    <t t-set="project" t-value="projects[1]"/>
                 </t>
             </xpath>
         </template>

@@ -148,6 +148,9 @@ class Bundle(models.Model):
                                DELETE FROM fetchmail_server;
                                DELETE FROM mail_mail;""")
 
+    def force_auto_rebase(self):
+        for bundle in self:
+            bundle._force(auto_rebase=True)
 
 
 class ConfigStep(models.Model):
