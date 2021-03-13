@@ -989,7 +989,6 @@ class BuildResult(models.Model):
     def _next_job_values(self):
         self.ensure_one()
         step_ids = self.params_id.config_id.step_ids()
-        _logger.info(f"step_ids={step_ids}")
         if not step_ids:  # no job to do, build is done
             return {'active_step': False, 'local_state': 'done'}
 
@@ -997,13 +996,7 @@ class BuildResult(models.Model):
             # means that a step has been run manually without using config
             return {'active_step': False, 'local_state': 'done'}
 
-        _logger.info(f"self={self}; self.active_step={self.active_step}")
-#        if self.active_step not in  step_ids:  #was giving some error
-#            _logger.error(f"self.active_step not in  step_ids \n {self.active_step} not in  {step_ids}")
-#            return {'active_step': False, 'local_state': 'done'}
-
         next_index = step_ids.index(self.active_step) + 1 if self.active_step else 0
-#        _logger.ingo(f"next_index={next_index}")
 
         while True:
             if next_index >= len(step_ids):  # final job, build is done
@@ -1120,12 +1113,9 @@ class BuildResult(models.Model):
                     continue
 
                 runbot_domain = self.env['runbot.runbot']._domain()
-                _logger.info(f"runbot_domain = {runbot_domain}")
                 trigger = self.params_id.trigger_id
                 target_url = trigger.ci_url or "http://%s/runbot/build/%s" % (runbot_domain, build.id)
-                _logger.info(f"target_url = ={target_url}")
                 desc = trigger.ci_description or " (runtime %ss)" % (build.job_time,)
-                _logger.info(f" desc={desc}")
                 if trigger.ci_context:
                     for build_commit in self.params_id.commit_link_ids:
                         commit = build_commit.commit_id
