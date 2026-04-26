@@ -656,6 +656,8 @@ class Repo(models.Model):
                     branch.head._github_status(False, "Branch naming", 'failure', False, message)
 
                 bundle = branch.bundle_id
+                if not bundle:
+                    continue
                 if bundle.no_build:
                     continue
 
