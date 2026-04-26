@@ -45,7 +45,7 @@ def _init_gh_logger():
     _gh.addHandler(handler)
     _gh.propagate = False
 
-if odoo.netsvc._logger_init:
+if getattr(odoo.netsvc, '_logger_init', False):
     _init_gh_logger()
 
 SimpleUser = TypedDict('SimpleUser', {
